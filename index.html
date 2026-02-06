@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Snapchat Downloader</title>
+<style>
+body { font-family: Arial; padding: 20px; }
+input, button { padding: 10px; margin: 5px 0; width: 100%; }
+#result { margin-top: 20px; }
+</style>
+</head>
+<body>
+
+<h1>Snapchat Downloader</h1>
+
+<input id="snapInput" type="text" placeholder="Enter Snapchat username or URL">
+<button id="downloadBtn">Fetch Story</button>
+
+<div id="result"></div>
+
+<script>
+document.getElementById("downloadBtn").addEventListener("click", async () => {
+  const input = document.getElementById("snapInput").value.trim();
+  if (!input) return alert("Enter a username or URL");
+
+  let url = input;
+  if (!input.startsWith("https://")) url = `https://www.snapchat.com/add/${input}`;
+
+  const resultDiv = document.getElementById("result");
+  resultDiv.textContent = "Fetching...";
+
+  try {
+    const res = await fetch(`/api/story?link=${encodeURIComponent(url)}`);
+    const data = await res.json();
+    if (data.error) resultDiv.textContent = "Error: " + data.error;
+    else resultDiv.textContent = JSON.stringify(data.data, null, 2);
+  } catch (err) {
+    resultDiv.textContent = "Fetch failed: " + err.message;
+  }
+});
+</script>
+
+</body>
+</html>
